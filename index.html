@@ -5,8 +5,23 @@
 			* {
 				box-sizing: border-box;
 			}
+			:root {
+				--spacing: 0.15in;
+				--bottom-shift: 0;
+			}
 			body {
+				font-family: sans-serif;
 				background-color: #fdfce3;
+			}
+			p {
+				font-size: x-large;
+			}
+			input {
+				background-color: inherit;
+				border: none;
+				font: inherit;
+				border-bottom: thin solid black;
+				width: 5ch;
 			}
 			main {
 				display: flex;
@@ -14,14 +29,18 @@
 			}
 			aside {
 				display: flex;
+				margin-left: var(--bottom-shift);
 			}
-			div[class] {
+			div[class]:not([class=""]) {
 				background: url(rainforest.jpg) content-box, white;
 				outline: 0.1in solid black;
 				outline-offset: -0.1in;
-				margin: 0.15in;
+				margin: var(--spacing);
 				padding: 0.244in;
 				flex-shrink: 0;
+			}
+			div[class].over {
+				outline-style: dashed;
 			}
 			div:not([class]) {
 				display: flex;
@@ -46,7 +65,35 @@
 		</style>
 	</head>
 	<body>
+		<p><label for="FrameSpacing">Frame spacing: </label> <input id="FrameSpacing" type="number" step="0.1" min="0" max="4" value="3"> inches</p>
+		<p><label for="BottomShift">Bottom row shift: </label> <input id="BottomShift" type="number" step="0.1" min="0" max="12" value="4.5"> inches</p>
 		<main>
+			<div class="L5x7"></div>
+			<div class="L8x10"></div>
+			<div class="P5x7"></div>
+			<div class="P5x7"></div>
+			<div class="P8x10"></div>
+			<div class="P5x7"></div>
+			<div class="L8x10"></div>
+			<div>
+				<div class="L5x7"></div>
+				<div class="L5x7"></div>
+			</div>
+			<div class="P8x10"></div>
+
+			<div class="L5x7"></div>
+			<div class="L8x10"></div>
+			<div class="P5x7"></div>
+			<div class="P5x7"></div>
+			<div class="P8x10"></div>
+			<div class="P5x7"></div>
+			<div class="L8x10"></div>
+			<div>
+				<div class="L5x7"></div>
+				<div class="L5x7"></div>
+			</div>
+			<div class="P8x10"></div>
+
 			<div class="L5x7"></div>
 			<div class="L8x10"></div>
 			<div class="P5x7"></div>
@@ -73,6 +120,88 @@
 			<div class="L8x10"></div>
 			<div class="P5x7"></div>
 			<div class="P5x7"></div>
+
+			<div class="P8x10"></div>
+			<div class="P5x7"></div>
+			<div class="L8x10"></div>
+			<div>
+				<div class="L5x7"></div>
+				<div class="L5x7"></div>
+			</div>
+			<div class="P8x10"></div>
+			<div class="L5x7"></div>
+			<div class="L8x10"></div>
+			<div class="P5x7"></div>
+			<div class="P5x7"></div>
+
+			<div class="P8x10"></div>
+			<div class="P5x7"></div>
+			<div class="L8x10"></div>
+			<div>
+				<div class="L5x7"></div>
+				<div class="L5x7"></div>
+			</div>
+			<div class="P8x10"></div>
+			<div class="L5x7"></div>
+			<div class="L8x10"></div>
+			<div class="P5x7"></div>
+			<div class="P5x7"></div>
 		</aside>
 	</body>
+
+	<script>
+		let dragSrcEl;
+		const all_draggable = document.querySelectorAll("main > div, aside > div");
+		all_draggable.forEach(node => node.setAttribute("draggable", true));
+		function handleDragStart(e) {
+			this.style.opacity = "0.4";
+			dragSrcEl = this;
+			e.dataTransfer.effectAllowed = "move";
+//			const parent = this.parentNode.nodeName;
+//			const start = [...this.parentNode.children].indexOf(this);
+//			e.dataTransfer.setData("text/plain", parent + ":" + start);
+		}
+		function handleDragEnd(e) {
+  			this.style.opacity = "";
+			all_draggable.forEach(item => item.classList.remove("over"));
+		}
+		
+		function handleDragOver(e) {
+			e.preventDefault();
+			return false;
+		}
+
+		function handleDragEnter(e) {
+  			this.classList.add("over");
+		}
+		function handleDragLeave(e) {
+  			this.classList.remove("over");
+		}
+
+		function handleDrop(e) {
+ 			e.stopPropagation();
+			const landing = [...this.parentNode.children].indexOf(this);
+			if (dragSrcEl !== this) {
+    			this.insertAdjacentElement("afterend", dragSrcEl);
+//    			const start = e.dataTransfer.getData("text/plain").split(":");
+  			}
+			return false;
+		}
+
+		all_draggable.forEach(item => {
+			item.addEventListener('dragstart', handleDragStart);
+			item.addEventListener('dragover', handleDragOver);
+			item.addEventListener('dragenter', handleDragEnter);
+			item.addEventListener('dragleave', handleDragLeave);
+			item.addEventListener('dragend', handleDragEnd);
+			item.addEventListener('drop', handleDrop);
+		});
+
+		const rootStyle = document.documentElement.style;
+		document.getElementById("FrameSpacing").addEventListener("change", e => rootStyle.setProperty("--spacing", e.target.value / 10 / 2 + "in"));
+		document.getElementById("BottomShift").addEventListener("change", e => rootStyle.setProperty("--bottom-shift", e.target.value / 10 + "in"));
+
+		document.getElementById("FrameSpacing").dispatchEvent(new Event("change"));
+		document.getElementById("BottomShift").dispatchEvent(new Event("change"));
+	</script>
 </html>
