@@ -1,0 +1,78 @@
+<html>
+	<head>
+		<title>Wide Gallery Wall Layout</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				background-color: #fdfce3;
+			}
+			main {
+				display: flex;
+				align-items: flex-end;
+			}
+			aside {
+				display: flex;
+			}
+			div[class] {
+				background: url(rainforest.jpg) content-box, white;
+				outline: 0.1in solid black;
+				outline-offset: -0.1in;
+				margin: 0.15in;
+				padding: 0.244in;
+				flex-shrink: 0;
+			}
+			div:not([class]) {
+				display: flex;
+				flex-direction: column;
+			}
+			.L8x10 {
+				height: 1.189in;
+				width: 1.49in;
+			}
+			.P8x10 {
+				width: 1.189in;
+				height: 1.49in;
+			}
+			.L5x7 {
+				height: 0.88in;
+				width: 1.094in;
+			}
+			.P5x7 {
+				width: 0.88in;
+				height: 1.094in;
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<div class="L5x7"></div>
+			<div class="L8x10"></div>
+			<div class="P5x7"></div>
+			<div class="P5x7"></div>
+			<div class="P8x10"></div>
+			<div class="P5x7"></div>
+			<div class="L8x10"></div>
+			<div>
+				<div class="L5x7"></div>
+				<div class="L5x7"></div>
+			</div>
+			<div class="P8x10"></div>
+		</main>
+		<aside>
+			<div class="P8x10"></div>
+			<div class="P5x7"></div>
+			<div class="L8x10"></div>
+			<div>
+				<div class="L5x7"></div>
+				<div class="L5x7"></div>
+			</div>
+			<div class="P8x10"></div>
+			<div class="L5x7"></div>
+			<div class="L8x10"></div>
+			<div class="P5x7"></div>
+			<div class="P5x7"></div>
+		</aside>
+	</body>
+</html>
