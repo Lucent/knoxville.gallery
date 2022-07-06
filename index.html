@@ -39,6 +39,10 @@
 				padding: 0.244in;
 				flex-shrink: 0;
 			}
+			div[class]:not([class=""]) > img {
+				object-fit: cover;
+				width: 100%;
+			}
 			div[class].over {
 				outline-style: dashed;
 			}
@@ -174,19 +178,23 @@
 		}
 
 		function handleDragEnter(e) {
-  			this.classList.add("over");
+			this.classList.add("over");
 		}
 		function handleDragLeave(e) {
-  			this.classList.remove("over");
+			this.classList.remove("over");
 		}
 
 		function handleDrop(e) {
  			e.stopPropagation();
+			this.classList.remove("over");
 			const landing = [...this.parentNode.children].indexOf(this);
-			if (dragSrcEl !== this) {
-    			this.insertAdjacentElement("afterend", dragSrcEl);
-//    			const start = e.dataTransfer.getData("text/plain").split(":");
-  			}
+			if (e.dataTransfer.files) {
+				e.preventDefault();
+				previewFile(this, e.dataTransfer.files[0]);
+			} else if (dragSrcEl !== this) {
+				this.insertAdjacentElement("afterend", dragSrcEl);
+//	 			const start = e.dataTransfer.getData("text/plain").split(":");
+			}
 			return false;
 		}
 
@@ -208,5 +216,15 @@
 
 		const total_width = document.getElementsByTagName("main")[0].offsetWidth / 96 * 10;
 		document.getElementById("TotalWidth").value = total_width.toFixed(0);
+
+		function previewFile(target, file) {
+			let reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onloadend = function() {
+ 				let img = document.createElement('img');
+ 				img.src = reader.result;
+	 			target.appendChild(img);
+			}
+		}
 	</script>
 </html>
