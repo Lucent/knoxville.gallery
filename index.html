@@ -6,7 +6,7 @@
 				box-sizing: border-box;
 			}
 			:root {
-				--spacing: 0.15in;
+				--spacing: 3in;
 				--bottom-shift: 0;
 			}
 			body {
@@ -36,12 +36,11 @@
 				outline: 0.16cm solid black;
 				outline-offset: -0.16cm;
 				margin: var(--spacing);
-				padding: 0.56cm;
+				background-repeat: no-repeat;
+				background-position: center;
 				flex-shrink: 0;
 			}
 			div[class]:not([class=""]) > img {
-				object-fit: cover;
-				width: 100%;
 			}
 			div[class].over {
 				outline-style: dashed;
@@ -53,18 +52,22 @@
 			.L8x10 {
 				height: 3cm;
 				width: 3.77cm;
+				background-size: 1.0in 0.8in !important;
 			}
 			.P8x10 {
 				width: 3cm;
 				height: 3.77cm;
+				background-size: 0.8in 1.0in !important;
 			}
 			.L5x7 {
 				height: 2.24cm;
 				width: 2.75cm;
+				background-size: 0.7in 0.5in !important;
 			}
 			.P5x7 {
 				width: 2.24cm;
 				height: 2.75cm;
+				background-size: 0.5in 0.7in !important;
 			}
 		</style>
 	</head>
