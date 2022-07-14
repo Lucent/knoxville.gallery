@@ -6,12 +6,19 @@
 				box-sizing: border-box;
 			}
 			:root {
-				--spacing: 3in;
+				/* distances all divided by 10 */
+				--spacing: 2in;
 				--bottom-shift: 0;
+				--frameborder: 1.6cm;
+				--bigframe-long: 37.7cm;
+				--bigframe-short: 30cm;
+				--smallframe-long: 27.5cm;
+				--smallframe-short: 22.4cm; 
 			}
 			body {
 				font-family: sans-serif;
 				background-color: #fdfce3;
+				margin: 0;
 			}
 			p {
 				font-size: x-large;
@@ -29,13 +36,13 @@
 			}
 			aside {
 				display: inline-flex;
-				margin-left: var(--bottom-shift);
+				margin-left: calc(var(--bottom-shift) / 10);
 			}
 			div[class]:not([class=""]) {
 				background: url(rainforest.jpg) content-box, white;
 				outline: 0.16cm solid black;
-				outline-offset: -0.16cm;
-				margin: var(--spacing);
+				outline-offset: calc(var(--frameborder) / -10);
+				margin: calc(var(--spacing) / 10);
 				background-repeat: no-repeat;
 				background-position: center;
 				flex-shrink: 0;
@@ -50,30 +57,30 @@
 				flex-direction: column;
 			}
 			.L8x10 {
-				height: 3cm;
-				width: 3.77cm;
+				height: calc(var(--bigframe-short) / 10);
+				width: calc(var(--bigframe-long) / 10);
 				background-size: 1.0in 0.8in !important;
 			}
 			.P8x10 {
-				width: 3cm;
-				height: 3.77cm;
+				width: calc(var(--bigframe-short) / 10);
+				height: calc(var(--bigframe-long) / 10);
 				background-size: 0.8in 1.0in !important;
 			}
 			.L5x7 {
-				height: 2.24cm;
-				width: 2.75cm;
+				height: calc(var(--smallframe-short) / 10);
+				width: calc(var(--smallframe-long) / 10);
 				background-size: 0.7in 0.5in !important;
 			}
 			.P5x7 {
-				width: 2.24cm;
-				height: 2.75cm;
+				width: calc(var(--smallframe-short) / 10);
+				height: calc(var(--smallframe-long) / 10);
 				background-size: 0.5in 0.7in !important;
 			}
 		</style>
 	</head>
 	<body>
-		<p><label for="FrameSpacing">Frame spacing: </label> <input id="FrameSpacing" type="number" step="0.1" min="0" max="4" value="3"> inches</p>
-		<p><label for="BottomShift">Bottom row shift: </label> <input id="BottomShift" type="number" step="0.5" min="0" max="12" value="7"> inches</p>
+		<p><label for="FrameSpacing">Frame spacing: </label> <input id="FrameSpacing" type="number" step="0.1" min="0" max="4" value="2"> inches</p>
+		<p><label for="BottomShift">Bottom row shift: </label> <input id="BottomShift" type="number" step="0.5" min="0" max="12" value="3"> inches</p>
 		<p><label for="TotalWidth">Total width: </label> <input readonly="readonly" id="TotalWidth" type="number"> inches</p>
 		<main>
 			<div class="L5x7"></div>
@@ -114,6 +121,10 @@
 				<div class="L5x7"></div>
 			</div>
 			<div class="P8x10"></div>
+
+			<div class="L5x7"></div>
+			<div class="L8x10"></div>
+			<div class="P5x7"></div>
 		</main>
 		<br>
 		<aside>
@@ -155,12 +166,19 @@
 			<div class="L8x10"></div>
 			<div class="P5x7"></div>
 			<div class="P5x7"></div>
+
+			<div class="P8x10"></div>
+			<div class="P5x7"></div>
+			<div class="L8x10"></div>
 		</aside>
 	</body>
 
 	<script>
+		const PX_TO_IN = 96;
+		const FRAMEBORDER = 6.047;
 		let dragSrcEl;
 		const all_draggable = document.querySelectorAll("main > div, aside > div");
+		const all_droppable = document.querySelectorAll("div[class]:not([class=''])");
 		all_draggable.forEach(node => node.setAttribute("draggable", true));
 		function handleDragStart(e) {
 			this.style.opacity = "0.4";
@@ -191,10 +209,12 @@
  			e.stopPropagation();
 			this.classList.remove("over");
 			const landing = [...this.parentNode.children].indexOf(this);
-			if (e.dataTransfer.files) {
+			if (e.dataTransfer.files.length) {
 				e.preventDefault();
-				previewFile(this, e.dataTransfer.files[0]);
-			} else if (dragSrcEl !== this) {
+				if (!this.classList.length)
+					return false;
+				change_background(this, e.dataTransfer.files[0]);
+			} else if (this !== dragSrcEl && !dragSrcEl.contains(this) && dragSrcEl.getAttribute("draggable") === "true") {
 				this.insertAdjacentElement("afterend", dragSrcEl);
 //	 			const start = e.dataTransfer.getData("text/plain").split(":");
 			}
@@ -207,27 +227,43 @@
 			item.addEventListener('dragenter', handleDragEnter);
 			item.addEventListener('dragleave', handleDragLeave);
 			item.addEventListener('dragend', handleDragEnd);
+		});
+		all_droppable.forEach(item => {
 			item.addEventListener('drop', handleDrop);
 		});
 
 		const rootStyle = document.documentElement.style;
-		document.getElementById("FrameSpacing").addEventListener("change", e => rootStyle.setProperty("--spacing", e.target.value / 10 / 2 + "in"));
-		document.getElementById("BottomShift").addEventListener("change", e => rootStyle.setProperty("--bottom-shift", e.target.value / 10 + "in"));
+		document.getElementById("FrameSpacing").addEventListener("change", e => {
+			rootStyle.setProperty("--spacing", e.target.value / 2 + "in");
+
+			const total_width = document.getElementsByTagName("main")[0].offsetWidth / 96 * 10;
+			document.getElementById("TotalWidth").value = total_width.toFixed(0);
+		});
+		document.getElementById("BottomShift").addEventListener("change", e => rootStyle.setProperty("--bottom-shift", e.target.value + "in"));
 
 		document.getElementById("FrameSpacing").dispatchEvent(new Event("change"));
 		document.getElementById("BottomShift").dispatchEvent(new Event("change"));
 
-		const total_width = document.getElementsByTagName("main")[0].offsetWidth / 96 * 10;
-		document.getElementById("TotalWidth").value = total_width.toFixed(0);
-
-		function previewFile(target, file) {
-			let reader = new FileReader();
+		function change_background(target, file) {
+			const reader = new FileReader();
+			reader.onloadend = e => target.style.backgroundImage = "url(" + e.target.result + ")";
 			reader.readAsDataURL(file);
-			reader.onloadend = function() {
- 				let img = document.createElement('img');
- 				img.src = reader.result;
-	 			target.appendChild(img);
-			}
+		}
+
+		const getTop = el => el.offsetTop + (el.offsetParent && getTop(el.offsetParent));
+		const getLeft = el => el.offsetLeft + (el.offsetParent && getLeft(el.offsetParent));
+		const getRight = el => (getLeft(el) + el.offsetWidth);
+
+		const lower = document.querySelectorAll("aside > div");
+		lower.forEach(frame => {
+			const left = (getLeft(frame) + FRAMEBORDER) / PX_TO_IN * 10;
+			const right = (getRight(frame) - FRAMEBORDER) / PX_TO_IN * 10;
+			console.log(toFrac(left), ", ", toFrac(right), "in");
+		})
+		function toFrac(num) {
+			const whole = Math.trunc(num);
+			const frac = num - whole;
+			return whole + " " + (frac * 16).toFixed(0) + "/16";
 		}
 	</script>
 </html>
