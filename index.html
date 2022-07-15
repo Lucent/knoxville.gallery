@@ -1,4 +1,5 @@
 <html>
+
 <head>
 	<title>Wide Gallery Wall Layout</title>
 	<style>
@@ -36,12 +37,14 @@
 			width: 5ch;
 		}
 
-		main {
+		header,
+		#Top {
 			display: inline-flex;
 			align-items: flex-end;
 		}
 
-		aside {
+		footer,
+		#Bottom {
 			display: inline-flex;
 			margin-left: calc(var(--bottom-shift) / 10);
 		}
@@ -105,17 +108,42 @@
 	<h3><label for="TotalWidth">Total width: </label> <input id="TotalWidth" type="number" value="403"> in (adjust to
 		add or remove frames)</h3>
 
-	<main></main>
+	<h2>Template to repeat</h2>
+	<header>
+		<div class="L5x7"></div>
+		<div class="L8x10"></div>
+		<div class="P5x7"></div>
+		<div class="P5x7"></div>
+		<div class="P8x10"></div>
+		<div class="P5x7"></div>
+		<div class="L8x10"></div>
+		<div>
+			<div class="L5x7"></div>
+			<div class="L5x7"></div>
+		</div>
+		<div class="P8x10"></div>
+	</header>
 	<br>
-	<aside></aside>
+	<footer>
+		<div class="P8x10"></div>
+		<div class="P5x7"></div>
+		<div class="L8x10"></div>
+		<div>
+			<div class="L5x7"></div>
+			<div class="L5x7"></div>
+		</div>
+		<div class="P8x10"></div>
+		<div class="L5x7"></div>
+		<div class="L8x10"></div>
+		<div class="P5x7"></div>
+		<div class="P5x7"></div>
+	</footer>
 
-	<h4>Bottom row</h4>
-	<ul>
-		<li>8x10 Portrait: 4cm from frame top to hook bottom. Center: 11.15cm</li>
-		<li>8x10 Landscape: 4cm from frame top to hook bottom. Center: 13.75cm</li>
-		<li>11x14 Portrait: 4.8cm from frame top to hook top. Center: 14.9cm</li>
-		<li>11x14 Landscape: 4.8cm from frame top to hook top. Center: 18.7cm</li>
-	</ul>
+	<h2>Design after repeating for total width</h2>
+	<section id="Top"></section>
+	<br>
+	<section id="Bottom"></section>
+
 	<h4>Top row</h4>
 	<ul>
 		<li>8x10 Portrait: 23.6cm from frame bottom to hook bottom. Center: 11.15cm</li>
@@ -124,174 +152,157 @@
 		<li>11x14 Landscape: 25.3cm from frame bottom to hook top. Center: 18.7cm</li>
 	</ul>
 
+	<h4>Bottom row</h4>
+	<ul>
+		<li>8x10 Portrait: 4cm from frame top to hook bottom. Center: 11.15cm</li>
+		<li>8x10 Landscape: 4cm from frame top to hook bottom. Center: 13.75cm</li>
+		<li>11x14 Portrait: 4.8cm from frame top to hook top. Center: 14.9cm</li>
+		<li>11x14 Landscape: 4.8cm from frame top to hook top. Center: 18.7cm</li>
+	</ul>
+
 	<p id="OrderTotal"></p>
 
-	<template id="Top">
-		<div class="L5x7"></div>
-		<div class="L8x10"></div>
-		<div class="P5x7"></div>
-		<div class="P5x7"></div>
-		<div class="P8x10"></div>
-		<div class="P5x7"></div>
-		<div class="L8x10"></div>
-		<div>
-			<div class="L5x7"></div>
-			<div class="L5x7"></div>
-		</div>
-		<div class="P8x10"></div>
-	</template>
-	<template id="Bottom">
-		<div class="P8x10"></div>
-		<div class="P5x7"></div>
-		<div class="L8x10"></div>
-		<div>
-			<div class="L5x7"></div>
-			<div class="L5x7"></div>
-		</div>
-		<div class="P8x10"></div>
-		<div class="L5x7"></div>
-		<div class="L8x10"></div>
-		<div class="P5x7"></div>
-		<div class="P5x7"></div>
-	</template>
-</body>
+	<script>
+		const PX_TO_IN = 96;
+		const FRAMEBORDER = 6.047;
+		let dragSrcEl;
+		const all_draggable = document.querySelectorAll("header > div, footer > div");
+		const all_droppable = document.querySelectorAll("div[class]:not([class=''])");
+		all_draggable.forEach(node => node.setAttribute("draggable", true));
+		function handleDragStart(e) {
+			this.style.opacity = "0.4";
+			dragSrcEl = this;
+			e.dataTransfer.effectAllowed = "move";
+		}
+		function handleDragEnd(e) {
+			this.style.opacity = "";
+			all_draggable.forEach(item => item.classList.remove("over"));
+		}
 
-<script>
-	const PX_TO_IN = 96;
-	const FRAMEBORDER = 6.047;
-	let dragSrcEl;
-	const all_draggable = document.querySelectorAll("main > div, aside > div");
-	const all_droppable = document.querySelectorAll("div[class]:not([class=''])");
-	all_draggable.forEach(node => node.setAttribute("draggable", true));
-	function handleDragStart(e) {
-		this.style.opacity = "0.4";
-		dragSrcEl = this;
-		e.dataTransfer.effectAllowed = "move";
-	}
-	function handleDragEnd(e) {
-		this.style.opacity = "";
-		all_draggable.forEach(item => item.classList.remove("over"));
-	}
-
-	function handleDragOver(e) {
-		e.preventDefault();
-		return false;
-	}
-
-	function handleDragEnter(e) {
-		this.classList.add("over");
-	}
-	function handleDragLeave(e) {
-		this.classList.remove("over");
-	}
-
-	function handleDrop(e) {
-		e.stopPropagation();
-		this.classList.remove("over");
-		const landing = [...this.parentNode.children].indexOf(this);
-		if (e.dataTransfer.files.length) {
+		function handleDragOver(e) {
 			e.preventDefault();
-			if (!this.classList.length)
-				return false;
-			change_background(this, e.dataTransfer.files[0]);
-		} else if (this !== dragSrcEl && !dragSrcEl.contains(this) && dragSrcEl.getAttribute("draggable") === "true") {
-			this.insertAdjacentElement("afterend", dragSrcEl);
+			return false;
 		}
-		return false;
-	}
 
-	all_draggable.forEach(item => {
-		item.addEventListener('dragstart', handleDragStart);
-		item.addEventListener('dragover', handleDragOver);
-		item.addEventListener('dragenter', handleDragEnter);
-		item.addEventListener('dragleave', handleDragLeave);
-		item.addEventListener('dragend', handleDragEnd);
-	});
-	all_droppable.forEach(item => {
-		item.addEventListener('drop', handleDrop);
-	});
+		function handleDragEnter(e) {
+			this.classList.add("over");
+		}
+		function handleDragLeave(e) {
+			this.classList.remove("over");
+		}
 
-	const rootStyle = document.documentElement.style;
-	document.getElementById("FrameSpacing").addEventListener("change", e => {
-		rootStyle.setProperty("--spacing", e.target.value / 2 + "in");
+		function handleDrop(e) {
+			e.stopPropagation();
+			this.classList.remove("over");
+			const landing = [...this.parentNode.children].indexOf(this);
+			if (e.dataTransfer.files.length) {
+				e.preventDefault();
+				if (!this.classList.length)
+					return false;
+				change_background(this, e.dataTransfer.files[0]);
+			} else if (this !== dragSrcEl && !dragSrcEl.contains(this) && dragSrcEl.getAttribute("draggable") === "true") {
+				this.insertAdjacentElement("afterend", dragSrcEl);
+				document.getElementById("TotalWidth").dispatchEvent(new Event("change"));
+			}
+			return false;
+		}
+
+		all_draggable.forEach(item => {
+			item.addEventListener('dragstart', handleDragStart);
+			item.addEventListener('dragover', handleDragOver);
+			item.addEventListener('dragenter', handleDragEnter);
+			item.addEventListener('dragleave', handleDragLeave);
+			item.addEventListener('dragend', handleDragEnd);
+		});
+		all_droppable.forEach(item => {
+			item.addEventListener('drop', handleDrop);
+		});
+
+		const rootStyle = document.documentElement.style;
+		document.getElementById("FrameSpacing").addEventListener("change", e => {
+			rootStyle.setProperty("--spacing", e.target.value / 2 + "in");
+			document.getElementById("TotalWidth").dispatchEvent(new Event("change"));
+		});
+		document.getElementById("BottomShift").addEventListener("change", e => {
+			rootStyle.setProperty("--bottom-shift", e.target.value + "in");
+			document.getElementById("TotalWidth").dispatchEvent(new Event("change"));
+		});
+
+		document.getElementById("TotalWidth").addEventListener("change", fill_from_template);
+		function fill_from_template() {
+			const top_row = document.getElementById("Top");
+			top_row.replaceChildren();
+			const template_top = document.querySelector("header");
+			let x_top = top_row.children.length;
+			const loop_size_top = template_top.children.length;
+			let width_top = top_row.offsetWidth / PX_TO_IN * 10;
+			while (width_top < this.value) {
+				top_row.appendChild(template_top.children[x_top % loop_size_top].cloneNode(true));
+				width_top = top_row.offsetWidth / PX_TO_IN * 10;
+				x_top++;
+			}
+			while (width_top > this.value) {
+				top_row.lastChild.remove();
+				width_top = top_row.offsetWidth / PX_TO_IN * 10;
+			}
+
+			const bottom_shift = parseFloat(rootStyle.getPropertyValue("--bottom-shift"));
+			const bottom_row = document.getElementById("Bottom");
+			bottom_row.replaceChildren();
+			const template_bottom = document.querySelector("footer");
+			let x_bottom = bottom_row.children.length;
+			const loop_size_bottom = template_bottom.children.length;
+			let width_bottom = bottom_row.offsetWidth / PX_TO_IN * 10 + bottom_shift;
+			while (width_bottom < this.value) {
+				bottom_row.appendChild(template_bottom.children[x_bottom % loop_size_bottom].cloneNode(true));
+				width_bottom = bottom_row.offsetWidth / PX_TO_IN * 10 + bottom_shift;
+				x_bottom++;
+			}
+			while (width_bottom > this.value) {
+				bottom_row.lastChild.remove();
+				width_bottom = bottom_row.offsetWidth / PX_TO_IN * 10 + bottom_shift;
+			}
+
+			update_order_total();
+		}
+
+		document.getElementById("FrameSpacing").dispatchEvent(new Event("change"));
+		document.getElementById("BottomShift").dispatchEvent(new Event("change"));
 		document.getElementById("TotalWidth").dispatchEvent(new Event("change"));
-	});
-	document.getElementById("BottomShift").addEventListener("change", e => {
-		rootStyle.setProperty("--bottom-shift", e.target.value + "in");
-		document.getElementById("TotalWidth").dispatchEvent(new Event("change"));
-	});
 
-	document.getElementById("TotalWidth").addEventListener("change", fill_from_template);
-	function fill_from_template(e) {
-		const top_row = document.querySelector("main");
-		const template_top = document.getElementById("Top").content;
-		let x_top = top_row.children.length;
-		const loop_size_top = template_top.children.length;
-		let width_top = top_row.offsetWidth / PX_TO_IN * 10;
-		while (width_top < this.value) {
-			top_row.appendChild(template_top.children[x_top % loop_size_top].cloneNode(true));
-			width_top = top_row.offsetWidth / PX_TO_IN * 10;
-			x_top++;
-		}
-		while (width_top > this.value) {
-			top_row.lastChild.remove();
-			width_top = top_row.offsetWidth / PX_TO_IN * 10;
+		function change_background(target, file) {
+			const reader = new FileReader();
+			reader.onloadend = e => target.style.backgroundImage = "url(" + e.target.result + ")";
+			reader.readAsDataURL(file);
 		}
 
-		const bottom_shift = parseFloat(rootStyle.getPropertyValue("--bottom-shift"));
-		const bottom_row = document.querySelector("aside");
-		const template_bottom = document.getElementById("Bottom").content;
-		let x_bottom = bottom_row.children.length;
-		const loop_size_bottom = template_bottom.children.length;
-		let width_bottom = bottom_row.offsetWidth / PX_TO_IN * 10 + bottom_shift;
-		while (width_bottom < this.value) {
-			bottom_row.appendChild(template_bottom.children[x_bottom % loop_size_bottom].cloneNode(true));
-			width_bottom = bottom_row.offsetWidth / PX_TO_IN * 10 + bottom_shift;
-			x_bottom++;
+		function update_order_total() {
+			const large_count = document.querySelectorAll("div[class$='8x10']").length;
+			const small_count = document.querySelectorAll("div[class$='5x7']").length;
+			const total_output = document.getElementById("OrderTotal");
+			const price_large = 5.6;
+			const price_small = 3.6;
+			const total_cost = large_count * price_large + small_count * price_small;
+			total_output.textContent = "You'll need " + large_count + " 11x14 frames and " + small_count + " 8x10 frames which will cost about " + (new Intl.NumberFormat("en-US", { style: 'currency', currency: "USD" }).format(total_cost)) + ".";
 		}
-		while (width_bottom > this.value) {
-			bottom_row.lastChild.remove();
-			width_bottom = bottom_row.offsetWidth / PX_TO_IN * 10 + bottom_shift;
+/*
+		const getTop = el => el.offsetTop + (el.offsetParent && getTop(el.offsetParent));
+		const getLeft = el => el.offsetLeft + (el.offsetParent && getLeft(el.offsetParent));
+		const getRight = el => (getLeft(el) + el.offsetWidth);
+								
+		const lower = document.querySelectorAll("aside > div");
+		lower.forEach(frame => {
+			const left = (getLeft(frame) + FRAMEBORDER) / PX_TO_IN * 10;
+			const right = (getRight(frame) - FRAMEBORDER) / PX_TO_IN * 10;
+			console.log(toFrac(left), ", ", toFrac(right), "in");
+		})
+		function toFrac(num) {
+			const whole = Math.trunc(num);
+			const frac = num - whole;
+			return whole + " " + (frac * 16).toFixed(0) + "/16";
 		}
-
-		update_order_total();
-	}
-
-	document.getElementById("FrameSpacing").dispatchEvent(new Event("change"));
-	document.getElementById("BottomShift").dispatchEvent(new Event("change"));
-	document.getElementById("TotalWidth").dispatchEvent(new Event("change"));
-
-	function change_background(target, file) {
-		const reader = new FileReader();
-		reader.onloadend = e => target.style.backgroundImage = "url(" + e.target.result + ")";
-		reader.readAsDataURL(file);
-	}
-
-	function update_order_total() {
-		const large_count = document.querySelectorAll("div[class$='8x10']").length;
-		const small_count = document.querySelectorAll("div[class$='5x7']").length;
-		const total_output = document.getElementById("OrderTotal");
-		const price_large = 5.6;
-		const price_small = 3.6;
-		const total_cost = large_count * price_large + small_count * price_small;
-		total_output.textContent = "You'll need " + large_count + " 11x14 frames and " + small_count + " 8x10 frames which will cost about " + (new Intl.NumberFormat("en-US", { style: 'currency', currency: "USD" }).format(total_cost)) + ".";
-	}
-
-	const getTop = el => el.offsetTop + (el.offsetParent && getTop(el.offsetParent));
-	const getLeft = el => el.offsetLeft + (el.offsetParent && getLeft(el.offsetParent));
-	const getRight = el => (getLeft(el) + el.offsetWidth);
-
-	const lower = document.querySelectorAll("aside > div");
-	lower.forEach(frame => {
-		const left = (getLeft(frame) + FRAMEBORDER) / PX_TO_IN * 10;
-		const right = (getRight(frame) - FRAMEBORDER) / PX_TO_IN * 10;
-		console.log(toFrac(left), ", ", toFrac(right), "in");
-	})
-	function toFrac(num) {
-		const whole = Math.trunc(num);
-		const frac = num - whole;
-		return whole + " " + (frac * 16).toFixed(0) + "/16";
-	}
-</script>
+*/
+	</script>
+</body>
 
 </html>
