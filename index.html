@@ -21,8 +21,10 @@
 		body {
 			font-family: sans-serif;
 			background-color: #fdfce3;
-			margin: 0;
 		}
+
+		aside {  }
+		main {  }
 
 		h3 {
 			font-size: large;
@@ -99,7 +101,7 @@
 
 	<p>Frames shown are exact dimensions for upsimples <a href="https://www.amazon.com/gp/product/B07VQZSLDW/">11x14
 			(matted to 8x10, 5 pack $28)</a> and <a href="https://www.amazon.com/dp/B07PY1K4K5">8x10 (matted to 5x7, 10
-			pack $36)</a> frames.</p>
+			pack $36)</a> frames. These mats crop a large 1cm border from all sides, so crop accordingly.</p>
 
 	<h3><label for="FrameSpacing">Frame spacing: </label> <input id="FrameSpacing" type="number" step="0.1" min="0"
 			max="5" value="2"> in</h3>
@@ -108,41 +110,45 @@
 	<h3><label for="TotalWidth">Total width: </label> <input id="TotalWidth" type="number" value="403"> in (adjust to
 		add or remove frames)</h3>
 
-	<h2>Template to repeat</h2>
-	<header>
-		<div class="L5x7"></div>
-		<div class="L8x10"></div>
-		<div class="P5x7"></div>
-		<div class="P5x7"></div>
-		<div class="P8x10"></div>
-		<div class="P5x7"></div>
-		<div class="L8x10"></div>
-		<div>
+	<aside>
+		<h2>Template to repeat</h2>
+		<header>
 			<div class="L5x7"></div>
+			<div class="L8x10"></div>
+			<div class="P5x7"></div>
+			<div class="P5x7"></div>
+			<div class="P8x10"></div>
+			<div class="P5x7"></div>
+			<div class="L8x10"></div>
+			<div>
+				<div class="L5x7"></div>
+				<div class="L5x7"></div>
+			</div>
+			<div class="P8x10"></div>
+		</header>
+		<br>
+		<footer>
+			<div class="P8x10"></div>
+			<div class="P5x7"></div>
+			<div class="L8x10"></div>
+			<div>
+				<div class="L5x7"></div>
+				<div class="L5x7"></div>
+			</div>
+			<div class="P8x10"></div>
 			<div class="L5x7"></div>
-		</div>
-		<div class="P8x10"></div>
-	</header>
-	<br>
-	<footer>
-		<div class="P8x10"></div>
-		<div class="P5x7"></div>
-		<div class="L8x10"></div>
-		<div>
-			<div class="L5x7"></div>
-			<div class="L5x7"></div>
-		</div>
-		<div class="P8x10"></div>
-		<div class="L5x7"></div>
-		<div class="L8x10"></div>
-		<div class="P5x7"></div>
-		<div class="P5x7"></div>
-	</footer>
+			<div class="L8x10"></div>
+			<div class="P5x7"></div>
+			<div class="P5x7"></div>
+		</footer>
+	</aside>
 
-	<h2>Design after repeating for total width</h2>
-	<section id="Top"></section>
-	<br>
-	<section id="Bottom"></section>
+	<main>
+		<h2>Design after repeating for total width</h2>
+		<section id="Top"></section>
+		<br>
+		<section id="Bottom"></section>
+	</main>
 
 	<h4>Top row</h4>
 	<ul>
@@ -160,7 +166,13 @@
 		<li>11x14 Landscape: 4.8cm from frame top to hook top. Center: 18.7cm</li>
 	</ul>
 
-	<p id="OrderTotal"></p>
+	<h4>Materials needed</h4>
+	<ul>
+		<li>11x14 frames and 8x10 prints</li>
+		<li>8x10 frames and 5x7 prints</li>
+		<p id="OrderTotal"></p>
+	</ul>
+	
 
 	<script>
 		const PX_TO_IN = 96;
@@ -276,32 +288,37 @@
 			reader.readAsDataURL(file);
 		}
 
+		function usd(dollars) {
+			return (new Intl.NumberFormat("en-US", { style: 'currency', currency: "USD" }).format(dollars));
+		}
 		function update_order_total() {
 			const large_count = document.querySelectorAll("div[class$='8x10']").length;
 			const small_count = document.querySelectorAll("div[class$='5x7']").length;
 			const total_output = document.getElementById("OrderTotal");
-			const price_large = 5.6;
-			const price_small = 3.6;
-			const total_cost = large_count * price_large + small_count * price_small;
-			total_output.textContent = "You'll need " + large_count + " 11x14 frames and " + small_count + " 8x10 frames which will cost about " + (new Intl.NumberFormat("en-US", { style: 'currency', currency: "USD" }).format(total_cost)) + ".";
+			const PRICE_LARGE = 5.6;
+			const PRICE_SMALL = 3.6;
+			const PRINT_LARGE = 1.79;
+			const PRINT_SMALL = 0.59;
+			const total_cost = large_count * (PRICE_LARGE + PRINT_LARGE) + small_count * (PRICE_SMALL + PRINT_SMALL);
+			total_output.textContent = large_count + " 11x14 frames (" + usd(large_count * PRICE_LARGE) + ") for " + large_count + " 8x10 prints (" + usd(large_count * PRINT_LARGE) + ") and " + small_count + " 8x10 frames (" + usd(small_count * PRICE_SMALL) + ") for " + small_count + " 5x7 prints (" + usd(small_count * PRINT_SMALL) + ") which will cost about " + usd(total_cost) + ".";
 		}
 /*
-		const getTop = el => el.offsetTop + (el.offsetParent && getTop(el.offsetParent));
-		const getLeft = el => el.offsetLeft + (el.offsetParent && getLeft(el.offsetParent));
-		const getRight = el => (getLeft(el) + el.offsetWidth);
-								
-		const lower = document.querySelectorAll("aside > div");
-		lower.forEach(frame => {
-			const left = (getLeft(frame) + FRAMEBORDER) / PX_TO_IN * 10;
-			const right = (getRight(frame) - FRAMEBORDER) / PX_TO_IN * 10;
-			console.log(toFrac(left), ", ", toFrac(right), "in");
-		})
-		function toFrac(num) {
-			const whole = Math.trunc(num);
-			const frac = num - whole;
-			return whole + " " + (frac * 16).toFixed(0) + "/16";
-		}
-*/
+				const getTop = el => el.offsetTop + (el.offsetParent && getTop(el.offsetParent));
+				const getLeft = el => el.offsetLeft + (el.offsetParent && getLeft(el.offsetParent));
+				const getRight = el => (getLeft(el) + el.offsetWidth);
+										
+				const lower = document.querySelectorAll("aside > div");
+				lower.forEach(frame => {
+					const left = (getLeft(frame) + FRAMEBORDER) / PX_TO_IN * 10;
+					const right = (getRight(frame) - FRAMEBORDER) / PX_TO_IN * 10;
+					console.log(toFrac(left), ", ", toFrac(right), "in");
+				})
+				function toFrac(num) {
+					const whole = Math.trunc(num);
+					const frac = num - whole;
+					return whole + " " + (frac * 16).toFixed(0) + "/16";
+				}
+		*/
 	</script>
 </body>
 
