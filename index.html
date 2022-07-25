@@ -20,11 +20,14 @@
 
 		body {
 			font-family: sans-serif;
-			background-color: #fdfce3;
+			background-color: #faf9ea;
 		}
 
-		aside {  }
-		main {  }
+		aside {}
+
+		main {}
+
+		img { width: 100%; border: thin solid gray; }
 
 		h3 {
 			font-size: large;
@@ -172,7 +175,8 @@
 		<li>8x10 frames and 5x7 prints</li>
 		<p id="OrderTotal"></p>
 	</ul>
-	
+
+	<img src="wide-gallery-wall.jpg">
 
 	<script>
 		const PX_TO_IN = 96;
@@ -303,22 +307,22 @@
 			total_output.textContent = large_count + " 11x14 frames (" + usd(large_count * PRICE_LARGE) + ") for " + large_count + " 8x10 prints (" + usd(large_count * PRINT_LARGE) + ") and " + small_count + " 8x10 frames (" + usd(small_count * PRICE_SMALL) + ") for " + small_count + " 5x7 prints (" + usd(small_count * PRINT_SMALL) + ") which will cost about " + usd(total_cost) + ".";
 		}
 /*
-				const getTop = el => el.offsetTop + (el.offsetParent && getTop(el.offsetParent));
-				const getLeft = el => el.offsetLeft + (el.offsetParent && getLeft(el.offsetParent));
-				const getRight = el => (getLeft(el) + el.offsetWidth);
-										
-				const lower = document.querySelectorAll("aside > div");
-				lower.forEach(frame => {
-					const left = (getLeft(frame) + FRAMEBORDER) / PX_TO_IN * 10;
-					const right = (getRight(frame) - FRAMEBORDER) / PX_TO_IN * 10;
-					console.log(toFrac(left), ", ", toFrac(right), "in");
-				})
-				function toFrac(num) {
-					const whole = Math.trunc(num);
-					const frac = num - whole;
-					return whole + " " + (frac * 16).toFixed(0) + "/16";
-				}
-		*/
+						const getTop = el => el.offsetTop + (el.offsetParent && getTop(el.offsetParent));
+						const getLeft = el => el.offsetLeft + (el.offsetParent && getLeft(el.offsetParent));
+						const getRight = el => (getLeft(el) + el.offsetWidth);
+												
+						const lower = document.querySelectorAll("aside > div");
+						lower.forEach(frame => {
+							const left = (getLeft(frame) + FRAMEBORDER) / PX_TO_IN * 10;
+							const right = (getRight(frame) - FRAMEBORDER) / PX_TO_IN * 10;
+							console.log(toFrac(left), ", ", toFrac(right), "in");
+						})
+						function toFrac(num) {
+							const whole = Math.trunc(num);
+							const frac = num - whole;
+							return whole + " " + (frac * 16).toFixed(0) + "/16";
+						}
+				*/
 	</script>
 </body>
 
